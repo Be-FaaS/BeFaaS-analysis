@@ -6,7 +6,7 @@ from collections import Counter
 
 from argmagic import argmagic
 
-import faastermetrics as fm
+import befaas as bf
 
 
 def parse_timewindow(timewindow: str) -> datetime.timedelta:
@@ -38,7 +38,7 @@ def dump_logs(
         version: Version requirement for inclusion.
         timewindow: Only include events inside a timewindow up to latest.
     """
-    log_entries = fm.parse_logdir(logdir)
+    log_entries = bf.parse_logdir(logdir)
     print(f"Loading {len(log_entries)} entries from {logdir}")
 
     if version is not None:

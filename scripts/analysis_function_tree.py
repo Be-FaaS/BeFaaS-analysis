@@ -7,8 +7,8 @@ from typing import List
 from collections import defaultdict, Counter
 
 from argmagic import argmagic
-import faastermetrics as fm
-import faastermetrics.graph as fg
+import befaas as bf
+import befaas.graph as fg
 
 
 def print_walk_node(graph, node, level=0):
@@ -22,7 +22,7 @@ def print_walk_node(graph, node, level=0):
         print_walk_node(graph, succ, level+1)
 
 
-def print_function_tree(entries: List[fm.LogEntry]):
+def print_function_tree(entries: List[bf.LogEntry]):
     """Print requests based on their xpairs and context ids."""
     graph = fg.build_function_graph(entries)
     for node, deg in graph.in_degree:
@@ -38,7 +38,7 @@ def main(logdump: pathlib.Path):
         logdump: Path to log json dump.
     """
 
-    data = fm.load_logs(logdump)
+    data = bf.load_logs(logdump)
 
     print_function_tree(data)
     # print_request_tree(data)

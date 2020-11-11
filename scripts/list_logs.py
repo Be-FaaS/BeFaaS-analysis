@@ -5,7 +5,7 @@ from collections import Counter
 
 from argmagic import argmagic
 
-import faastermetrics as fm
+import befaas as bf
 
 
 def _lprint(*args, level=0, lead=">"):
@@ -20,7 +20,7 @@ def _print_log_folder(logdir: pathlib.Path, level: int):
 
     _lprint(logdir.name, level=level)
 
-    all_entries = fm.parse_logdir(logdir)
+    all_entries = bf.parse_logdir(logdir)
     lprint(f"Total entries: {len(all_entries)}")
 
     platform_entries = Counter([e.platform for e in all_entries])
@@ -36,7 +36,7 @@ def _print_log_folder(logdir: pathlib.Path, level: int):
 
 def _walk_dirs(logdir: pathlib.Path, level: int = 0):
     """Recursively walk through directories until logdir is reached."""
-    if fm.is_log_folder(logdir):
+    if bf.is_log_folder(logdir):
         _print_log_folder(logdir, level)
     elif logdir.is_dir():
         _lprint(logdir.name, level=level)

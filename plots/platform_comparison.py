@@ -11,7 +11,7 @@ import seaborn as sns
 
 from argmagic import argmagic
 
-import faastermetrics as fm
+import befaas as bf
 
 
 sns.set_style("whitegrid")
@@ -63,7 +63,7 @@ def main(logpath: pathlib.Path, output: pathlib.Path):
     output = output / logpath.name
     output.mkdir(exist_ok=True, parents=True)
 
-    platform_logs = {f.stem.split("_")[-1]: fm.load_logs(f) for f in logpath.glob("*.json")}
+    platform_logs = {f.stem.split("_")[-1]: bf.load_logs(f) for f in logpath.glob("*.json")}
 
     plot_platform_comparison(platform_logs, output)
 

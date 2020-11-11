@@ -12,10 +12,10 @@ import numpy as np
 import networkx as nx
 from networkx.drawing.nx_agraph import to_agraph
 
-import faastermetrics as fm
-from faastermetrics.helper import group_by, uniq_by
-from faastermetrics.logentry import UNDEFINED_XPAIR
-from faastermetrics.graph import build_function_graph, add_default_metadata, build_call_graph
+import befaas as bf
+from befaas.helper import group_by, uniq_by
+from befaas.logentry import UNDEFINED_XPAIR
+from befaas.graph import build_function_graph, add_default_metadata, build_call_graph
 
 
 STYLE_CLASSIC = {
@@ -338,7 +338,7 @@ def plot_graph(graph, plotdir, filters, style="classic"):
     A.draw(str(plotdir), format="png")
 
 
-def analyze_tree(data: List[fm.LogEntry], plotdir: pathlib.Path, style: str, filters: dict):
+def analyze_tree(data: List[bf.LogEntry], plotdir: pathlib.Path, style: str, filters: dict):
     """Build the call graph from the given logging data.
     """
     context_id = filters["context_id"]
@@ -400,7 +400,7 @@ def main(
         output = output / data.stem
         output.mkdir(parents=True, exist_ok=True)
 
-    data = fm.load_logs(data)
+    data = bf.load_logs(data)
     graph_filters = {
         "function_tree": ftree,
         "functions_only": functions,

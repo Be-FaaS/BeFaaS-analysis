@@ -5,7 +5,7 @@ from dataclasses import asdict
 import pandas as pd
 from argmagic import argmagic
 
-import faastermetrics as fm
+import befaas as bf
 
 EXPORTERS = {
     ".csv": lambda frame, target: frame.to_csv(target),
@@ -23,7 +23,7 @@ def main(input_data: pathlib.Path, out_name: pathlib.Path):
     if out_name.suffix not in EXPORTERS:
         print(f"Unknown extension {out_name.suffix}")
         return
-    data = fm.load_logs(input_data)
+    data = bf.load_logs(input_data)
     df = pd.json_normalize(map(asdict, data))
     EXPORTERS[out_name.suffix](df, out_name)
 

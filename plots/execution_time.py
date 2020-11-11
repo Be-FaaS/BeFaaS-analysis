@@ -8,9 +8,9 @@ import seaborn as sns
 
 from argmagic import argmagic
 
-import faastermetrics as fm
-from faastermetrics.helper import group_by
-from faastermetrics.calls import create_requestgroups
+import befaas as bf
+from befaas.helper import group_by
+from befaas.calls import create_requestgroups
 
 sns.set_style("whitegrid")
 
@@ -123,7 +123,7 @@ def main(input_data: pathlib.Path, plot_dir: pathlib.Path):
     # plot_dir = plot_dir / input_data.stem
     plot_dir.mkdir(exist_ok=True, parents=True)
 
-    data = fm.load_logs(input_data)
+    data = bf.load_logs(input_data)
 
     plot_function_execution_time(data, plot_dir)
     plot_function_execution_time_frontend(data, plot_dir)
