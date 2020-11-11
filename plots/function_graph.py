@@ -215,10 +215,6 @@ def format_graph(graph, filters, style):
         if show_time:
             labels += [f"{data['rpc_out']:.2f}ms"]
 
-        # show no edge label until we figure out rpcOut issues: https://github.com/FaaSterMetrics/analysis/issues/24
-        # if context_id:
-        #     return ""
-
         if len(labels) > 0:
             label = html_table([[l] for l in labels], style["edge_label_table"])
             return f'<{label}>'
