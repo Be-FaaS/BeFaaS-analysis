@@ -28,12 +28,12 @@ $ conda env create -f environment.yml
 Make sure to activate the correct conda environment before running anything.
 
 ```
-$ conda activate faastermetrics
+$ conda activate befaas
 $ conda env list  # check that the env is properly installed and activated
 > # conda environments:
 > #
 > base                     /Users/max/miniconda
-> faastermetrics        *  /Users/max/miniconda/envs/faastermetrics
+> befaas        *  /Users/max/miniconda/envs/befaas
 ```
 
 Now you will need to install either using a development or a normal install of
@@ -49,7 +49,7 @@ $ python setup.py install
 
 ### Development install
 
-Install the faastermetrics from the current repository by executing setup.py in
+Install the befaas from the current repository by executing setup.py in
 development mode:
 
 ```

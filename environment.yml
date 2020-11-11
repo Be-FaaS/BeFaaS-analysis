@@ -1,4 +1,4 @@
-name: faastermetrics2
+name: befaas
 channels:
   - defaults
   - conda-forge
