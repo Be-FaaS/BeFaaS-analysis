@@ -15,7 +15,7 @@ __version__ = "2.4.3"
 register("datetime", datetime.datetime, datetime.datetime.fromisoformat, datetime.datetime.isoformat)
 
 
-MESSAGE_TAG = "FAASTERMETRICS"
+MESSAGE_TAG = "BEFAAS"
 
 
 def load_logs(logdump: pathlib.Path) -> List[Union[RequestLog, PerfLog]]:
