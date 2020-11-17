@@ -26,6 +26,7 @@ setuptools.setup(
         "json_coder==0.5",
         "argmagic==1.0.1",
         "networkx",
+        "numpy",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
