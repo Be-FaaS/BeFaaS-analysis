@@ -27,6 +27,7 @@ setuptools.setup(
         "argmagic==1.0.1",
         "networkx",
         "numpy",
+        "loguru",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
