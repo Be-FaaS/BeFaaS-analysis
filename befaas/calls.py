@@ -5,6 +5,8 @@ from typing import List
 import datetime
 from dataclasses import dataclass, field
 
+from loguru import logger
+
 from .logentry import LogEntry, RequestLog, PerfLog, UNDEFINED_XPAIR, MARK_END, MARK_START, ArtilleryLog
 from . import helper as cg
 from .helper import group_by_function, group_by, uniq_by
@@ -71,7 +73,11 @@ def single_request_to_call(entries: List[LogEntry], id=None, function=None) -> C
     if function is None:
         function, = uniq_by(entries, lambda e: e.fn["name"])
 
-    measure = cg.get_one(entries, lambda e: e.perf["entryType"] == "measure")
+    try:
+        measure = cg.get_one(entries, lambda e: e.perf["entryType"] == "measure")
+    except ValueError:
+        raise ValueError(f"Failed to find measure entry for: {id} {function} from {entries}")
+
     duration = datetime.timedelta(milliseconds=measure.perf["duration"])
 
     return Call(
@@ -93,14 +99,21 @@ def get_rpc_out_id(entries):
 
 
 def request_to_call(entries: List[LogEntry]) -> Call:
+
     perf_entries = [e for e in entries if isinstance(e, PerfLog)]
     incoming_entries = [e for e in perf_entries if PerfLog.is_incoming_entry(e)]
     outgoing_entries = [e for e in perf_entries if PerfLog.is_outgoing_entry(e)]
+
+    logger.debug(
+        "Split request into {} perf {} incoming {} outgoing",
+        len(perf_entries), len(incoming_entries), len(outgoing_entries))
+
     call = single_request_to_call(incoming_entries)
     call.calls = [
         single_request_to_call(e, get_rpc_out_id(e), get_rpc_out_function(e))
         for e in group_by(outgoing_entries, lambda e: e.perf_type_data).values()
     ]
+
     request_entries = [e for e in entries if isinstance(e, RequestLog)]
     if len(request_entries) > 1:
         raise ValueError(f"Too many request entries in single group: {request_entries}")
@@ -119,11 +132,14 @@ def misc_to_call(entries: List[LogEntry]) -> Call:
 
 def id_groups_to_call(entry_id, entries: List[LogEntry]) -> Call:
     if entry_id[0] is None:
+        logger.debug("Generate misc call for: {} using {} entries", entry_id, len(entries))
         return misc_to_call(entries)
 
     if all(isinstance(e, ArtilleryLog) for e in entries):
+        logger.debug("Generate artillery call for: {} using {} entries", entry_id, len(entries))
         return artillery_to_call(entries)
 
+    logger.debug("Generate request call for: {} using {} entries", entry_id, len(entries))
     return request_to_call(entries)
 
 
@@ -172,10 +188,18 @@ def normalize_call_names(calls):
 def create_requestgroups(data: List[LogEntry]) -> List[Call]:
     """Create a list of logs based on request behavior."""
     context_id_groups = group_by(data, lambda e: e.id)
-    calls = [
-        id_groups_to_call(id, entries)
-        for id, entries in context_id_groups.items()
-    ]
+    logger.debug("Group LogEntries by ContextID: Found {} groups", len(context_id_groups))
+    calls = []
+    failed = []
+    for id, entries in context_id_groups.items():
+        try:
+            call = id_groups_to_call(id, entries)
+            calls.append(call)
+        except ValueError as error:
+            failed.append((id, error))
+    logger.info("Processed {} Groups: {} success {} failed", len(context_id_groups), len(calls), len(failed))
+    for fail in failed:
+        print(fail)
 
     # remove calls without a context ID, these are most probably platform
     # messages
