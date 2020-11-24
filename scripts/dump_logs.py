@@ -4,6 +4,10 @@ import pathlib
 import datetime
 from collections import Counter
 
+from typing import Callable
+
+from loguru import logger
+
 from argmagic import argmagic
 
 import befaas as bf
@@ -22,6 +26,67 @@ def parse_timewindow(timewindow: str) -> datetime.timedelta:
     else:
         raise ValueError(f"Time window should be number with d/h/m/s suffix (eg 30h) but got: {timewindow}")
     return datetime.timedelta(**tdelta_args)
+
+
+def path_line_iterator(path: pathlib.Path):
+    for filepath in path.glob("*.log"):
+        logger.debug("Reading {}", filepath)
+        platform = filepath.stem
+        with open(filepath) as f:
+            for line in f:
+                yield (platform, line)
+
+
+
+def parse_logdir_iter(logdir: pathlib.Path, outdir: pathlib.Path, filters: [Callable] = None):
+    """Iteratively parse and store log entries.
+    """
+    if outdir.is_dir():
+        outdir = outdir / f"{logdir.name}.json"
+
+    if filters is None:
+        filters = []
+
+    logger.debug("Writing to {}", outdir)
+    with open(outdir, "w") as jsfile:
+        jsfile.write("[")
+        initial = True
+        for platform, line in path_line_iterator(logdir):
+            entry = bf.parse_entry(line, platform)
+
+            if entry is not None:
+                if all([f(entry) for f in filters]):
+                    jsfile.write(("" if initial else ",") + json.dumps(entry))
+                    initial = False
+
+        jsfile.write("]")
+    logger.debug("Finished writing logdump")
+
+
+def dump_logs_iter(
+        logdir: pathlib.Path,
+        outdir: pathlib.Path,
+        version: str = None,
+        timewindow: str = None,
+):
+    filters = [
+        bf.is_valid
+    ]
+
+    deploy_path = logdir / "deployment_id.txt"
+    if deploy_path.exists():
+        with open(deploy_path) as dfile:
+            deploy_id = dfile.read().strip()
+
+        filters.append(lambda e: e.data.get("deploymentId", "") == deploy_id)
+
+    if version is not None:
+        filters.append(lambda e: e.data["version"] == version)
+
+    if timewindow is not None:
+        raise NotImplementedError("Timewindow currently not supported in iterative version.")
+
+    parse_logdir_iter(logdir, outdir, filters)
 
 
 def dump_logs(
@@ -77,4 +142,4 @@ def dump_logs(
 
 
 if __name__ == "__main__":
-    argmagic(dump_logs, positional=("logdir", "outdir"))
+    argmagic(dump_logs_iter, positional=("logdir", "outdir"))
