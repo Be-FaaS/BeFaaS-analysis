@@ -23,7 +23,7 @@ else
 	echo "Using logdump at $file_dump"
 fi
 
-python3 ./scripts/analysis_function_tree.py "$file_dump" > "$2/function_tree.txt"
-python3 ./scripts/export.py "$file_dump" "$2/dump.csv"
-python3 ./plots/execution_time.py "$file_dump" "$2"
-python3 ./plots/function_graph.py --style modern "$file_dump" "$2/function_graph.png"
+#python3 ./scripts/analysis_function_tree.py "$file_dump" > "$2/function_tree.txt"
+#python3 ./scripts/export.py "$file_dump" "$2/dump.csv"
+#python3 ./plots/execution_time.py "$file_dump" "$2"
+#python3 ./plots/function_graph.py --style modern "$file_dump" "$2/function_graph.png"
