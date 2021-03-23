@@ -14,7 +14,6 @@ __version__ = "2.4.3"
 
 register("datetime", datetime.datetime, datetime.datetime.fromisoformat, datetime.datetime.isoformat)
 
-
 MESSAGE_TAG = "BEFAAS"
 
 
@@ -60,6 +59,8 @@ def parse_logfile(path: pathlib.Path, platform: str = None) -> List[LogEntry]:
 
 
 def parse_entry(raw_entry: str, platform: str) -> LogEntry:
+    if raw_entry.find("{\\\"") > -1:
+        raw_entry = raw_entry.replace("\\\"", "\\\\\\\"")
     start_pos = raw_entry.find(MESSAGE_TAG)
     decoder = json.JSONDecoder()
     if start_pos == -1:

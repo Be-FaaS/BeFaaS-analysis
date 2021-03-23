@@ -172,10 +172,14 @@ def normalize_call_names(calls):
 def create_requestgroups(data: List[LogEntry]) -> List[Call]:
     """Create a list of logs based on request behavior."""
     context_id_groups = group_by(data, lambda e: e.id)
-    calls = [
-        id_groups_to_call(id, entries)
-        for id, entries in context_id_groups.items()
-    ]
+
+    calls = []
+    for id, entries in context_id_groups.items():
+        try:
+            c = id_groups_to_call(id, entries)
+            calls.append(c)
+        except:
+            print(f"Error for ctx {id}:{entries}")
 
     # remove calls without a context ID, these are most probably platform
     # messages

@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
-import json
 import pathlib
-from pprint import pprint
 from typing import List
-
-from collections import defaultdict, Counter
-
 from argmagic import argmagic
 import befaas as bf
 import befaas.graph as fg

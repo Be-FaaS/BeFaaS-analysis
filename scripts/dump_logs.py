@@ -34,6 +34,7 @@ def path_line_iterator(path: pathlib.Path):
         platform = filepath.stem
         with open(filepath) as f:
             for line in f:
+
                 yield (platform, line)
 
 
@@ -52,6 +53,7 @@ def parse_logdir_iter(logdir: pathlib.Path, outdir: pathlib.Path, filters: [Call
         jsfile.write("[")
         initial = True
         for platform, line in path_line_iterator(logdir):
+            # print(f"plattform: {platform}, line: {line}")
             entry = bf.parse_entry(line, platform)
 
             if entry is not None:

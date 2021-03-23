@@ -8,7 +8,6 @@ import numpy as np
 import networkx as nx
 from .logentry import LogEntry
 from .calls import create_requestgroups
-from .helper import uniq_by, group_by
 
 
 def build_call_graph(entries: LogEntry) -> nx.DiGraph:

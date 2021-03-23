@@ -131,3 +131,4 @@ dmypy.json
 # CUSTOM ignores
 /output
 .vscode
+/.idea

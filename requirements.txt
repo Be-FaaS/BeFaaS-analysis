@@ -1,0 +1,6 @@
+"json_coder==0.5"
+"argmagic==1.0.1"
+"simplejson"
+"networkx"
+"numpy"
+"loguru"
