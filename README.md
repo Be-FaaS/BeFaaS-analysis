@@ -76,6 +76,14 @@ This will output a single `2020-05-23_16-21-29.json` in the output directory.
 
 ---
 
+### (Re-) Generate paper figures
+1. Locate you own log dumps or see the log dumps in `/dumps` (and unzip them)
+2. Install all packages listed in `requirements.txt`
+3. See `/paperplots`:
+    1. Notebooks ending with `_calc` analyze dump files, files ending with `_draw` generate the plots
+    2. Adjust path, dump file list, and output file in the respective header
+    3. Run the `_calc` notebook first, it will fill a `.pkl` file which is used as input for the `draw` notebook
+
 ## License
 
 This repository is licensed under the Apache 2.0 License. 
