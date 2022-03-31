@@ -59,8 +59,8 @@ def parse_logfile(path: pathlib.Path, platform: str = None) -> List[LogEntry]:
 
 
 def parse_entry(raw_entry: str, platform: str) -> LogEntry:
-    if raw_entry.find("{\\\"") > -1:
-        raw_entry = raw_entry.replace("\\\"", "\\\\\\\"")
+    #if raw_entry.find("{\\\"") > -1:
+    #    raw_entry = raw_entry.replace("\\\"", "\\\\\\\"")
     start_pos = raw_entry.find(MESSAGE_TAG)
     decoder = json.JSONDecoder()
     if start_pos == -1:
@@ -69,6 +69,7 @@ def parse_entry(raw_entry: str, platform: str) -> LogEntry:
 
     dec_entry = raw_entry[json_start:].encode("utf-8").decode("unicode_escape")
     dec_entry = "".join(c for c in dec_entry if c not in ("\x0e", "\x12", "\x14", "\n"))
+    #print(f"decEntry: {dec_entry}")
     obj, _ = decoder.raw_decode(dec_entry)
 
     timestamp = datetime.datetime.fromtimestamp(obj["timestamp"] / 1000)
