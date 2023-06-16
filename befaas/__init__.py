@@ -59,8 +59,8 @@ def parse_logfile(path: pathlib.Path, platform: str = None) -> List[LogEntry]:
 
 
 def parse_entry(raw_entry: str, platform: str) -> LogEntry:
-    if raw_entry.find("{\\\"") > -1:
-        raw_entry = raw_entry.replace("\\\"", "\\\\\\\"")
+    #if raw_entry.find("{\\\"") > -1:
+    #    raw_entry = raw_entry.replace("\\\"", "\\\\\\\"")
     start_pos = raw_entry.find(MESSAGE_TAG)
     decoder = json.JSONDecoder()
     if start_pos == -1:
@@ -69,6 +69,24 @@ def parse_entry(raw_entry: str, platform: str) -> LogEntry:
 
     dec_entry = raw_entry[json_start:].encode("utf-8").decode("unicode_escape")
     dec_entry = "".join(c for c in dec_entry if c not in ("\x0e", "\x12", "\x14", "\n"))
+
+    # Special Azure stuff
+    if (dec_entry.__contains__("\"storageObj={\"")):
+        helperArray = dec_entry.split("\"storageObj={")
+        # print("0:" + helperArray[0])
+        # print("1:" + helperArray[1])
+
+        end = helperArray[1].find("}")
+        num = helperArray[1].count("\"", 0, end);
+
+        helperArray[1] = helperArray[1].replace("\"", "\\\"", num)
+        # print("2:" + helperArray[1])
+        dec_entry = helperArray[0] + "\"storageObj={" + helperArray[1]
+        # print(f"decEntry: {dec_entry}")
+
+
+
+    # print(f"decEntry: {dec_entry}")
     obj, _ = decoder.raw_decode(dec_entry)
 
     timestamp = datetime.datetime.fromtimestamp(obj["timestamp"] / 1000)

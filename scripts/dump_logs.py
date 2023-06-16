@@ -32,9 +32,8 @@ def path_line_iterator(path: pathlib.Path):
     for filepath in path.glob("*.log"):
         logger.debug("Reading {}", filepath)
         platform = filepath.stem
-        with open(filepath) as f:
+        with open(filepath, encoding="utf8") as f:
             for line in f:
-
                 yield (platform, line)
 
 
